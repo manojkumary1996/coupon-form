@@ -27,7 +27,7 @@
             <div class="col-6">
               <mat-form-field color="accent" class="input-half-width">
                 <mat-label>Start Date*</mat-label>
-                <input matInput [matDatepicker]="picker1" formControlName="valid_from">
+                <input matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker1" formControlName="valid_from">
                 <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                 <mat-datepicker #picker1></mat-datepicker>
               </mat-form-field>
@@ -35,7 +35,7 @@
             <div class="col-6">
               <mat-form-field color="accent" class="input-half-width">
                 <mat-label>End Date*</mat-label>
-                <input matInput [matDatepicker]="picker2" formControlName="valid_to">
+                <input matInput [matDatepickerFilter]="myFilter2" [matDatepicker]="picker2" formControlName="valid_to">
                 <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                 <mat-datepicker #picker2 color="accent"></mat-datepicker>
               </mat-form-field>
@@ -47,13 +47,13 @@
               <mat-form-field class="input-half-width">
                 <mat-label>Coupon Availability*</mat-label>
                 <mat-select formControlName="is_unlimited">
-                  <mat-option value="Unlimited">Unlimited</mat-option>
-                  <mat-option value="Limited">Limited</mat-option>
+                  <mat-option (click)="onUnlimitedAvailability()" value="True">Unlimited</mat-option>
+                  <mat-option (click)="onLimitedAvailability()" value="False">Limited</mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
             <div class="col-6">
-              <mat-form-field class="input-half-width">
+              <mat-form-field class="input-half-width" *ngIf="!isUnlimited">
                 <mat-label>Coupon count</mat-label>
                 <input matInput formControlName="coupon_count">
               </mat-form-field>
@@ -64,7 +64,7 @@
           <!-- //text editor  -->
           <angular-editor formControlName="tnc" [config]="config"></angular-editor>
           <!-- end of editor  -->
-
+          <br>
           <mat-form-field class="input-full-width">
             <mat-label>Coupon Status</mat-label>
             <mat-select formControlName="is_active">
@@ -88,22 +88,34 @@
         <div class="row mt-1">
           <div class="offset-lg-2 col-lg-8 offset-md-1 col-md-10">
             <mat-card>
-              <p>
-                <mat-toolbar color="disabled">
-                  <span>RULE {{i+1}}</span>
-                </mat-toolbar>
-              </p>
+              <div class="row">
+                <div class="col-lg-11 col-md-10 col-10">
+                  <p>
+                    <mat-toolbar color="disabled">
+                      <span>RULE {{i+1}}</span>
+                    </mat-toolbar>
+                  </p>
+                </div>
+                <!-- Delete button  -->
+                <div class="col-lg-1 col-md-2 col-2">
+                  <button type="button" mat-mini-fab color="warn" (click)="onDeleteRules()">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+                <!-- End of Delete button  -->
+              </div>
+
               <div class="row">
                 <div class="col-6">
                   <mat-form-field class="input-half-width">
                     <mat-label>Min Amount*</mat-label>
-                    <input matInput formControlName="min_amount">
+                    <input type="number" matInput formControlName="min_amount">
                   </mat-form-field>
                 </div>
                 <div class="col-6">
                   <mat-form-field class="input-half-width">
                     <mat-label>Max Amount</mat-label>
-                    <input matInput formControlName="max_amount">
+                    <input type="number" matInput formControlName="max_amount">
                   </mat-form-field>
                 </div>
                 <div class="col-6">
@@ -117,21 +129,17 @@
                 <div class="col-6">
                   <mat-form-field class="input-half-width">
                     <mat-label>Discount Amount*</mat-label>
-                    <input matInput formControlName="discount">
+                    <input type="number" matInput formControlName="discount">
                   </mat-form-field>
                 </div>
                 <div class="col-6">
                   <mat-form-field class="input-half-width">
                     <mat-label>Max Discount Amount</mat-label>
-                    <input matInput formControlName="max_discount">
+                    <input type="number" matInput formControlName="max_discount">
                   </mat-form-field>
                 </div>
               </div>
             </mat-card>
-            <!-- Delete button  -->
-            <button type="button" mat-raised-button color="warn" class="float-right"
-              (click)="onDeleteRules()">Delete</button>
-              <!-- End of Delete button  -->
           </div>
         </div>
       </div>
@@ -147,11 +155,14 @@
           </button>
           <button type="button" mat-stroked-button color="primary">Add More</button>
         </div>
-        <button type="submit" mat-raised-button color="primary">Save</button>
+        <button type="submit" mat-raised-button color="primary" [disabled]="couponForm.invalid">Save</button>
+        <button type="reset" mat-icon-button color="primary" (click)="resetForm()">
+          <mat-icon>refresh</mat-icon>
+        </button>
       </div>
     </div>
     <!-- End of button section   -->
-
+    
   </form>
   <!-- End of form  -->
 </div>
